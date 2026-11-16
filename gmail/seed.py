@@ -1,22 +1,18 @@
 """Seed Dovecot with the Gmail stand-in users and write the proxy's initial Gmail model.
 
 Usage: seed.py gmail <gmail-state.json> <manifest.json>
-       seed.py bench <user> <messages> <manifest.json>
 
 Gmail users (same 5,000-message All Mail corpus, plus Spam and Trash):
   gmail        normal account
   gmailhidden  All Mail hidden from IMAP ("Show in IMAP" off); the proxy hides it
   gmailcapped  Folder Size Limit 2,000: every folder shows only its newest 2,000 messages
   gmailcap5k   Folder Size Limit 5,000: All Mail holds exactly 5,000, so the cap only bites when new mail arrives
-Bench users hold one large INBOX of small messages for the expunge-detection benchmark.
 """
 import json
 import os
-import random
 import sys
 import time
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tools"))
 sys.path.insert(0, os.path.dirname(__file__))
 import corpus  # noqa: E402
 from imapraw import Raw, quote, select_info  # noqa: E402
@@ -46,29 +42,6 @@ def append_many(raw, folder, items, depth=256):
             drain()
     drain()
 
-
-def multiappend(raw, folder, items, batch=5000):
-    """RFC 3502 MULTIAPPEND: one command (one Dovecot transaction) per `batch` messages. Single APPENDs slowed
-    to ~450 messages/s at 80k messages in one mdbox folder."""
-    buf = []
-
-    def flush():
-        if not buf:
-            return
-        tag = raw.next_tag()
-        parts = [f"{tag} APPEND {quote(folder)}".encode()]
-        for flags, date, data in buf:
-            parts.append(f' ({" ".join(flags)}) "{date}" {{{len(data)}+}}\r\n'.encode() + data)
-        raw.send(b"".join(parts) + b"\r\n")
-        status, line, _ = raw.collect(tag)
-        if status != "OK":
-            raise RuntimeError(f"MULTIAPPEND {folder}: {line}")
-        buf.clear()
-    for item in items:
-        buf.append(item)
-        if len(buf) >= batch:
-            flush()
-    flush()
 
 
 def gmail_model():
@@ -128,40 +101,9 @@ def seed_gmail(state_path, manifest_path):
         json.dump(manifest, f, indent=2)
 
 
-def bench_message(i):
-    return (f"Message-ID: <bench-{i}@bench.example>\r\nDate: Mon, 02 Nov 2026 10:00:00 +0000\r\n"
-            f"From: Sender {i % 977} <s{i % 977}@bench.example>\r\nTo: owner@gmail.example\r\n"
-            f"Subject: bench message {i}\r\n\r\nbody {i}\r\n").encode()
-
-
-def seed_bench(user, count, manifest_path):
-    """One INBOX with `count` small messages; flag mix ~92% \\Seen, 3% \\Flagged, 8% \\Answered."""
-    t0 = time.monotonic()
-    rng = random.Random(f"{corpus.SEED}:bench:{user}")
-    raw = Raw(user=user)
-
-    def items():
-        for i in range(count):
-            flags = []
-            if rng.random() < 0.92:
-                flags.append("\\Seen")
-            if rng.random() < 0.03:
-                flags.append("\\Flagged")
-            if rng.random() < 0.08:
-                flags.append("\\Answered")
-            yield flags, "02-Nov-2026 10:00:00 +0000", bench_message(i)
-    multiappend(raw, "INBOX", items())
-    _, untagged = raw.ok("EXAMINE INBOX")
-    info = select_info(untagged)
-    raw.close()
-    if info["exists"] != count:
-        raise RuntimeError(f"{user}: EXISTS {info}")
-    with open(manifest_path, "w") as f:
-        json.dump({"user": user, "messages": count, "seconds": round(time.monotonic() - t0, 1), "select": info}, f)
 
 
 if __name__ == "__main__":
-    if sys.argv[1] == "gmail":
-        seed_gmail(sys.argv[2], sys.argv[3])
-    else:
-        seed_bench(sys.argv[2], int(sys.argv[3]), sys.argv[4])
+    if len(sys.argv) != 4 or sys.argv[1] != "gmail":
+        raise SystemExit(__doc__)
+    seed_gmail(sys.argv[2], sys.argv[3])

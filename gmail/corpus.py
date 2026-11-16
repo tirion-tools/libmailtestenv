@@ -22,19 +22,6 @@ SEED = 20261112
 START = datetime(2020, 11, 1, tzinfo=timezone.utc)
 END = datetime(2026, 11, 1, tzinfo=timezone.utc)
 
-# name, address, display name, locale, [(folder, count, special-use)]
-ACCOUNTS = [
-    ("acct1", "alice@work.example", "Alice Anders", "en",
-     [("INBOX", 40000), ("Sent", 4000), ("Archive", 6000), ("Lists/dev", 3000), ("Drafts", 20)]),
-    ("acct2", "bob@home.example", "Bob Brown", "en",
-     [("INBOX", 12000), ("Sent", 2000), ("Archive", 4000)]),
-    ("acct3", "carol@news.example", "Carol Chen", "mixed",
-     [("INBOX", 9000), ("Sent", 1000), ("Newsletters", 3000)]),
-    ("acct4", "dmitri@example.ru", "Дмитрий Смирнов", "ru",
-     [("INBOX", 7000), ("Sent", 980), ("Trash", 1000)]),
-    ("acct5", "yuki@example.jp", "山田 由紀", "ja",
-     [("INBOX", 5000), ("Sent", 1000), ("Projects", 1000)]),
-]
 GMAIL_ACCOUNT = ("gmail", "owner@gmail.example", "Mailbox Owner", "mixed", 5000)
 GMAIL_ALL = "[Gmail]/All Mail"
 # label -> folder that Gmail exposes for it
@@ -322,19 +309,6 @@ def initial_flags(rng, folder, index, count):
     return flags
 
 
-def generate_folder(account, folder, count, seed=SEED, start=START, end=END, tag="base"):
-    """Yield (internaldate, flags, raw, meta) in ascending date order for one folder."""
-    rng = random.Random(f"{seed}:{tag}:{account[0]}:{folder}")
-    times = folder_times(rng, count, start, end)
-    ring = []
-    scale = 2.5 if folder == "Newsletters" else 1.0
-    for i, when in enumerate(times):
-        mrng = random.Random(f"{seed}:{tag}:{account[0]}:{folder}:{i}")
-        raw, meta = make_message(mrng, account, account[3], i, ring, when, scale=scale,
-                                 sent_from_owner=folder in ("Sent", "Drafts"))
-        internal = when + timedelta(seconds=mrng.randrange(5, 300))
-        yield internal, initial_flags(mrng, folder, i, count), raw, meta
-
 
 def generate_gmail(seed=SEED):
     """Yield (internaldate, flags, raw, meta, labels, gm_msgid, gm_thrid) for the Gmail stand-in."""
@@ -399,22 +373,3 @@ def generate_gmail_outside(folder, seed=SEED):
         yield when + timedelta(seconds=mrng.randrange(5, 300)), flags, raw, labels, gm, gm
 
 
-def make_new_gmail_message(i, seed=SEED):
-    """A new message arriving during the incremental scenarios (deterministic in i)."""
-    account = (GMAIL_ACCOUNT[0], GMAIL_ACCOUNT[1], GMAIL_ACCOUNT[2], GMAIL_ACCOUNT[3], [])
-    mrng = random.Random(f"{seed}:gmail:new:{i}")
-    when = END + timedelta(hours=i + 1)
-    raw, _ = make_message(mrng, account, account[3], 950_000 + i, [], when)
-    return when, raw
-
-def imap_date(dt):
-    return dt.astimezone(timezone.utc).strftime("%d-%b-%Y %H:%M:%S +0000")
-
-
-def digest_update(h, raw):
-    h.update(len(raw).to_bytes(8, "little"))
-    h.update(raw)
-
-
-def new_digest():
-    return hashlib.sha256()

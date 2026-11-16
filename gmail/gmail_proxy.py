@@ -54,8 +54,7 @@ import resource
 import sys
 import traceback
 
-sys.path.insert(0, __file__.rsplit("/", 2)[0] + "/gen")
-import corpus  # noqa: E402
+import corpus
 
 ALL, SPAM, TRASH = corpus.GMAIL_ALL, corpus.GMAIL_SPAM, corpus.GMAIL_TRASH
 LABEL_OF = {folder: label for label, folder in corpus.GMAIL_LABEL_FOLDERS.items()}

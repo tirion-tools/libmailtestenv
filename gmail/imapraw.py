@@ -97,22 +97,6 @@ def quote(name: str) -> str:
     return '"' + name.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
-def parse_list(untagged):
-    """Parse LIST responses into (flags, name)."""
-    out = []
-    for resp in untagged:
-        line = resp[0].decode(errors="replace")
-        m = re.match(r'\* LIST \(([^)]*)\) (?:"[^"]*"|NIL) (.*)\r\n$', line)
-        if not m:
-            continue
-        name = m.group(2)
-        if len(resp) > 1:
-            name = resp[1].decode()
-        elif name.startswith('"'):
-            name = name[1:-1].replace('\\"', '"').replace("\\\\", "\\")
-        out.append((m.group(1).split(), name))
-    return out
-
 
 def select_info(untagged):
     info = {}
@@ -128,77 +112,7 @@ def select_info(untagged):
     return info
 
 
-def uid_search_all(raw, criteria="ALL"):
-    _, untagged = raw.ok(f"UID SEARCH {criteria}")
-    uids = []
-    for resp in untagged:
-        line = resp[0].decode()
-        if line.startswith("* SEARCH"):
-            uids.extend(int(x) for x in line[8:].split())
-    return sorted(uids)
-
 
 FLAG_BITS = {"\\seen": 1, "\\answered": 2, "\\flagged": 4, "\\deleted": 8, "\\draft": 16}
 
 
-def flags_to_bits(flag_text: str) -> int:
-    bits = 0
-    for f in flag_text.split():
-        bits |= FLAG_BITS.get(f.lower(), 0)
-    return bits
-
-
-def norm_msgid_from_header_block(block: bytes):
-    """Same rule as both clients: first Message-ID header, unfolded, trimmed, inside <...>."""
-    value = header_value(block, b"message-id")
-    if value is None:
-        return None
-    text = value.decode("utf-8", errors="replace").strip()
-    lt = text.find("<")
-    if lt >= 0:
-        gt = text.find(">", lt + 1)
-        if gt > lt:
-            text = text[lt + 1 : gt]
-    return text or None
-
-
-def header_value(block: bytes, name: bytes):
-    current_name = None
-    current = []
-    for raw_line in block.split(b"\n"):
-        line = raw_line.rstrip(b"\r")
-        if line[:1] in (b" ", b"\t") and current_name is not None:
-            current.append(b" " + line.strip())
-            continue
-        if current_name == name:
-            return b"".join(current)
-        if not line:
-            break
-        colon = line.find(b":")
-        if colon <= 0:
-            current_name = None
-            continue
-        current_name = line[:colon].strip().lower()
-        current = [line[colon + 1 :]]
-    if current_name == name:
-        return b"".join(current)
-    return None
-
-
-def fetch_state(raw, folder):
-    """Return (select_info, {uid: (flag_bits, message_id)}) for one folder."""
-    _, untagged = raw.ok(f"EXAMINE {quote(folder)}")
-    info = select_info(untagged)
-    state = {}
-    if info.get("exists", 0) == 0:
-        return info, state
-    _, untagged = raw.ok("UID FETCH 1:* (UID FLAGS BODY.PEEK[HEADER.FIELDS (MESSAGE-ID)])")
-    for resp in untagged:
-        head = b" ".join(resp[0::2]).decode(errors="replace")
-        m_uid = re.search(r"\bUID (\d+)", head)
-        m_flags = re.search(r"FLAGS \(([^)]*)\)", head)
-        if not m_uid or " FETCH " not in head:
-            continue
-        block = resp[1] if len(resp) > 1 else b""
-        state[int(m_uid.group(1))] = (flags_to_bits(m_flags.group(1) if m_flags else ""), norm_msgid_from_header_block(block))
-    return info, state
