@@ -107,8 +107,11 @@ Disk use, in 4 KiB blocks:
 
 Pins for the pristine snapshot:
 - `sha256(MANIFEST.tsv)` = `1b54962f1feaa0b720fd3a130fa8379c7c5e19ce863e54433670593399bef9dd`
-- Maildir index digest = `90897f71e7f53cace792e07edd77bae6599474dbc201a60f8e7e3e3af08d44a5`
-  (`.cache/build/maildir-index.sha256`, over 574,443 files: 574,415 messages and 28 `dovecot-uidlist`).
+- Maildir index digest of the 2026-11-15 build = `90897f71e7f53cace792e07edd77bae6599474dbc201a60f8e7e3e3af08d44a5`
+  (`build/maildir-index.sha256`, over 574,443 files: 574,415 messages and 28 `dovecot-uidlist`). It identifies one
+  build, not the inputs: the index records each `dovecot-uidlist`'s mtime, which is the build time, and that build
+  used an earlier file-name tag (see "Builder policy"). A rebuild writes its own digest; the apache role compares
+  against whatever `build/maildir-index.sha256` holds.
 
 Download:
 - 2,260 counted requests (plus a handful of manual probes) over 5 h 26 min of fetch time:
