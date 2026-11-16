@@ -1,0 +1,403 @@
+{
+ "source": "Thunderbird test corpus, releases-comm-central e2ac505abeb247df2bb605d740a954887d2f4bfd (see PROVENANCE)",
+ "keys": {
+  "secret_keys": [
+   "keys/tb-alice.sec.asc",
+   "keys/tb-bob.sec.asc"
+  ],
+  "certs": [
+   "keys/tb-alice.pub.asc",
+   "keys/tb-bob.pub.asc",
+   "keys/tb-carol.pub.asc"
+  ],
+  "smime_anchors": [
+   "keys/tb-smime-TestCA.pem"
+  ],
+  "pkcs12": [
+   {
+    "file": "keys/tb-smime-Bob.p12",
+    "password": "nss"
+   },
+   {
+    "file": "keys/tb-smime-Alice.p12",
+    "password": "nss"
+   }
+  ]
+ },
+ "fixtures": [
+  {
+   "id": "tb-alice-signed",
+   "file": "eml/tb-alice-signed.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "none",
+    "sig": "verified"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-bob-to-alice-signed-damaged-signature",
+   "file": "eml/tb-bob-to-alice-signed-damaged-signature.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "none",
+    "sig": "bad"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-enc-to-carol@pgp.icu-revoked",
+   "file": "eml/tb-enc-to-carol@pgp.icu-revoked.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "no-key",
+    "sig": "any"
+   },
+   "note": "encrypted to a key we do not hold"
+  },
+  {
+   "id": "tb-encrypted-and-signed-alice-to-bob-nonascii",
+   "file": "eml/tb-encrypted-and-signed-alice-to-bob-nonascii.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "decrypted",
+    "sig": "verified"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-encrypted-to-alice-as-hidden-recipient",
+   "file": "eml/tb-encrypted-to-alice-as-hidden-recipient.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "decrypted",
+    "sig": "any"
+   },
+   "note": "hidden (wildcard key id) recipient"
+  },
+  {
+   "id": "tb-encrypted-to-bob-and-100-others",
+   "file": "eml/tb-encrypted-to-bob-and-100-others.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "decrypted",
+    "sig": "any"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-eve-duplicate",
+   "file": "eml/tb-eve-duplicate.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "none",
+    "sig": "none"
+   },
+   "note": "two keys for Eve attached; key import is an explicit user action"
+  },
+  {
+   "id": "tb-inline-signed-latin1",
+   "file": "eml/tb-inline-signed-latin1.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "none",
+    "sig": "any"
+   },
+   "note": "recorded only"
+  },
+  {
+   "id": "tb-inline-signed-utf8",
+   "file": "eml/tb-inline-signed-utf8.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "none",
+    "sig": "any"
+   },
+   "note": "recorded only"
+  },
+  {
+   "id": "tb-multiple-signatures",
+   "file": "eml/tb-multiple-signatures.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "any",
+    "sig": "any"
+   },
+   "note": "recorded only"
+  },
+  {
+   "id": "tb-openpgp__stripped_sig",
+   "file": "eml/tb-openpgp__stripped_sig.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "none",
+    "sig": "not-verified"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-partial-encrypt-for-alice-html",
+   "file": "eml/tb-partial-encrypt-for-alice-html.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "partial-not-decrypted",
+    "sig": "none"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-partial-encrypt-for-alice-plaintext",
+   "file": "eml/tb-partial-encrypt-for-alice-plaintext.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "partial-not-decrypted",
+    "sig": "none"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-rc-openpgp-aead",
+   "file": "eml/tb-rc-openpgp-aead.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "decrypted",
+    "sig": "any"
+   },
+   "note": "AEAD positive control"
+  },
+  {
+   "id": "tb-rc-openpgp-mdc",
+   "file": "eml/tb-rc-openpgp-mdc.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "decrypted",
+    "sig": "any"
+   },
+   "note": "SEIPDv1 positive control"
+  },
+  {
+   "id": "tb-rc-openpgp-mdc-tampered",
+   "file": "eml/tb-rc-openpgp-mdc-tampered.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "refused-integrity-failure",
+    "sig": "none"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-rc-openpgp-mixed-subpart",
+   "file": "eml/tb-rc-openpgp-mixed-subpart.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "partial-not-decrypted",
+    "sig": "none"
+   },
+   "note": "encrypted part inside multipart/mixed"
+  },
+  {
+   "id": "tb-rc-openpgp-nomdc",
+   "file": "eml/tb-rc-openpgp-nomdc.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "refused-no-integrity",
+    "sig": "none"
+   },
+   "note": "SED packet without MDC"
+  },
+  {
+   "id": "tb-rc-openpgp-sigwrap-mdc",
+   "file": "eml/tb-rc-openpgp-sigwrap-mdc.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "partial-not-decrypted",
+    "sig": "not-verified"
+   },
+   "note": "attacker signature around someone else's ciphertext"
+  },
+  {
+   "id": "tb-rc-openpgp-sigwrap-nomdc",
+   "file": "eml/tb-rc-openpgp-sigwrap-nomdc.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "partial-not-decrypted",
+    "sig": "not-verified"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-signed-by-0x3099ff1238852b9f-encrypted-to-0xf231550c4f47e38e",
+   "file": "eml/tb-signed-by-0x3099ff1238852b9f-encrypted-to-0xf231550c4f47e38e.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "decrypted",
+    "sig": "verified"
+   },
+   "note": "Carol -> Alice"
+  },
+  {
+   "id": "tb-signed-by-0x3099ff1238852b9f-to-0xf231550c4f47e38e-unencrypted",
+   "file": "eml/tb-signed-by-0x3099ff1238852b9f-to-0xf231550c4f47e38e-unencrypted.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "none",
+    "sig": "verified"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-signed-by-0xfbfcc82a015e7330-encrypted-to-0xf231550c4f47e38e",
+   "file": "eml/tb-signed-by-0xfbfcc82a015e7330-encrypted-to-0xf231550c4f47e38e.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "decrypted",
+    "sig": "verified"
+   },
+   "note": "Bob -> Alice"
+  },
+  {
+   "id": "tb-signed-by-0xfbfcc82a015e7330-to-0xf231550c4f47e38e-unencrypted",
+   "file": "eml/tb-signed-by-0xfbfcc82a015e7330-to-0xf231550c4f47e38e-unencrypted.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "none",
+    "sig": "verified"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-signed-by-0xfbfcc82a015e7330-to-0xf231550c4f47e38e-unencrypted-in-mixed",
+   "file": "eml/tb-signed-by-0xfbfcc82a015e7330-to-0xf231550c4f47e38e-unencrypted-in-mixed.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "none",
+    "sig": "unverified-partial"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-signed-mismatch-email-date",
+   "file": "eml/tb-signed-mismatch-email-date.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "none",
+    "sig": "verified"
+   },
+   "note": "signature time differs from the Date header; a reader should show the signature time (the Date header is sender text)"
+  },
+  {
+   "id": "tb-signed-with-mailman-footer",
+   "file": "eml/tb-signed-with-mailman-footer.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "none",
+    "sig": "unverified-partial"
+   },
+   "note": "list footer outside the signed part"
+  },
+  {
+   "id": "tb-sigspoof-git-commit",
+   "file": "eml/tb-sigspoof-git-commit.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "refused-malformed",
+    "sig": "not-verified"
+   },
+   "note": "a cleartext-signed git commit placed where ciphertext belongs ('You are fired!')"
+  },
+  {
+   "id": "tb-smime-alice.dsig.SHA256.multipart",
+   "file": "eml/tb-smime-alice.dsig.SHA256.multipart.eml",
+   "source": "Thunderbird/NSS S/MIME corpus (comm-central e2ac505a)",
+   "kind": "smime",
+   "expect": {
+    "enc": "none",
+    "sig": "verified-or-expired"
+   },
+   "note": "NSS-made"
+  },
+  {
+   "id": "tb-smime-alice.dsig.SHA256.multipart.bad",
+   "file": "eml/tb-smime-alice.dsig.SHA256.multipart.bad.eml",
+   "source": "Thunderbird/NSS S/MIME corpus (comm-central e2ac505a)",
+   "kind": "smime",
+   "expect": {
+    "enc": "none",
+    "sig": "bad"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-smime-alice.dsig.SHA256.multipart.mismatch-econtent",
+   "file": "eml/tb-smime-alice.dsig.SHA256.multipart.mismatch-econtent.eml",
+   "source": "Thunderbird/NSS S/MIME corpus (comm-central e2ac505a)",
+   "kind": "smime",
+   "expect": {
+    "enc": "none",
+    "sig": "not-verified"
+   },
+   "note": "Johnny CMS eContent confusion: detached signature with embedded different eContent"
+  },
+  {
+   "id": "tb-smime-alice.dsig.SHA512.multipart.mismatch-econtent",
+   "file": "eml/tb-smime-alice.dsig.SHA512.multipart.mismatch-econtent.eml",
+   "source": "Thunderbird/NSS S/MIME corpus (comm-central e2ac505a)",
+   "kind": "smime",
+   "expect": {
+    "enc": "none",
+    "sig": "not-verified"
+   },
+   "note": ""
+  },
+  {
+   "id": "tb-smime-alice.env",
+   "file": "eml/tb-smime-alice.env.eml",
+   "source": "Thunderbird/NSS S/MIME corpus (comm-central e2ac505a)",
+   "kind": "smime",
+   "expect": {
+    "enc": "decrypted-unauthenticated",
+    "sig": "none"
+   },
+   "note": "NSS EnvelopedData to Alice"
+  },
+  {
+   "id": "tb-unsigned-encrypted-to-0xf231550c4f47e38e-from-0xfbfcc82a015e7330",
+   "file": "eml/tb-unsigned-encrypted-to-0xf231550c4f47e38e-from-0xfbfcc82a015e7330.eml",
+   "source": "Thunderbird test corpus (comm-central e2ac505a)",
+   "kind": "openpgp",
+   "expect": {
+    "enc": "decrypted",
+    "sig": "none"
+   },
+   "note": ""
+  }
+ ]
+}

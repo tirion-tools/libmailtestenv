@@ -8,6 +8,9 @@ the NSS S/MIME data). Nothing else in this repository is covered by this licence
 
 Every hash equals the commit's file.
 
+manifest.json lists each message with what a correct OpenPGP or S/MIME reader reports (expect.enc,
+expect.sig), the keys and the PKCS#12 passwords; it is MIT-licensed metadata, like the rest of the repository.
+
 sha256  file  <- path at that commit
 05b24963b407507a587576c115a01f29741b97a7237d062598719eebd4d29723  eml/tb-alice-signed.eml  <- mail/test/browser/openpgp/data/eml/alice-signed.eml
 760b22ba4e26417bca5234916179e14930b827be9b8fd98c9b5e4cdd5a5ae70a  eml/tb-bob-to-alice-signed-damaged-signature.eml  <- mail/test/browser/openpgp/data/eml/bob-to-alice-signed-damaged-signature.eml
