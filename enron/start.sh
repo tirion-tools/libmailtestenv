@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# mailtestenv-enron. /state (bind mount testenv/.state/enron) holds:
+# mailtestenv-enron. /state (bind mount STATE/enron) holds:
 #   pristine/  converted once from the pinned tarball (/dl/enron.tar.gz, read-only), then read-only:
 #              mail/<owner>/Maildir, users, MANIFEST.tsv, MANIFEST.sha256, STAMP
 #   work/      the copy Dovecot serves (moves, flags, expunges, Junk allowed); `testenv.sh reset enron`
@@ -19,7 +19,7 @@ if [[ ! -f /state/pristine/STAMP || $(cat /state/pristine/STAMP) != "$STAMP" ]];
   rm -rf /state/pristine /state/pristine.tmp /state/work
   mkdir -p /state/pristine.tmp
   python3 "$SRC/convert.py" /dl/enron.tar.gz /state/pristine.tmp
-  echo "$STAMP" > /state/pristine.tmp/STAMP
+  echo "$STAMP" >/state/pristine.tmp/STAMP
   chown -R testenv:testenv /state/pristine.tmp
   chmod -R a-w /state/pristine.tmp/mail
   mv /state/pristine.tmp /state/pristine
@@ -31,18 +31,30 @@ if [[ ! -d /state/work/mail ]]; then
   chown -R testenv:testenv /state/work
 fi
 [[ -r /tls/enron.crt && -r /tls/enron.key ]] ||
-  { echo "no TLS certificate in /tls: start the mail role first (it issues enron's certificate)" >&2; exit 1; }
+  {
+    echo "no TLS certificate in /tls: start the mail role first (it issues enron's certificate)" >&2
+    exit 1
+  }
 install -d -m 0755 /etc/postfix/pki
-enron_pem  # also run by testenv.sh after a mail start re-issues the certificate
+enron_pem # also run by testenv.sh after a mail start re-issues the certificate
 install -m 0644 "$SRC/main.cf" /etc/postfix/main.cf
 install -m 0644 "$SRC/master.cf" /etc/postfix/master.cf
 touch /var/log/postfix.log
 dovecot -c "$SRC/dovecot.conf"
 postfix check
 postfix start 2>/dev/null
-up() { local p; for p in 13143 13993 587 465; do (exec 3<>/dev/tcp/127.0.0.1/$p) 2>/dev/null || return 1; done; }
-for _ in $(seq 100); do up && break; sleep 0.1; done
-up || { cat /tmp/dovecot/dovecot.log /var/log/postfix.log; exit 1; }
+up() {
+  local p
+  for p in 13143 13993 587 465; do (exec 3<>/dev/tcp/127.0.0.1/$p) 2>/dev/null || return 1; done
+}
+for _ in $(seq 100); do
+  up && break
+  sleep 0.1
+done
+up || {
+  cat /tmp/dovecot/dovecot.log /var/log/postfix.log
+  exit 1
+}
 echo "manifest $(cat /state/pristine/MANIFEST.sha256): $(tail -n 1 /state/pristine/MANIFEST.tsv)"
 echo "mailtestenv-enron ready"
 exec tail -F /tmp/dovecot/dovecot.log /var/log/postfix.log

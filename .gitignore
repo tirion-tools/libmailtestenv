@@ -1,1 +1,4 @@
 /.state
+/.cache
+/datasets/apache/.cache/
+__pycache__/

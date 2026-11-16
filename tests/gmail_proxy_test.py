@@ -1,4 +1,4 @@
-"""Regression tests of the Gmail stand-in proxy (testenv/gmail/gmail_proxy.py), run by `testenv/testenv.sh selftest`.
+"""Regression tests of the Gmail stand-in proxy (gmail/gmail_proxy.py), run by `testenv.sh selftest`.
 
 Runs as root inside a throwaway container of the testenv image (no network, state on tmpfs): starts Dovecot with the
 gmail role's configuration, seeds a three-message account, starts the proxy and drives it with imaplib. Every client

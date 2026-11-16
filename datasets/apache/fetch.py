@@ -25,7 +25,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-CACHE = HERE / ".cache"
+# Downloads and builds go to MAILTESTENV_APACHE_DIR (default .cache/ here); nothing there is committed.
+CACHE = Path(os.environ.get("MAILTESTENV_APACHE_DIR") or HERE / ".cache").resolve()
 MBOX_DIR = CACHE / "mbox"
 MANIFEST = HERE / "MANIFEST.tsv"
 LISTS = HERE / "lists.tsv"

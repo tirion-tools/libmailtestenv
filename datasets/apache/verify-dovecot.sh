@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 # Open a copy of the built Maildir in a throwaway Dovecot 2.4 container (no network, no ports, no
 # protocols) and print per-folder status plus the first/last INTERNALDATE of every folder.
-# The copy is a hard-link tree in .cache/dovecot-check/ (no extra disk): Dovecot only reads message
+# The copy is a hard-link tree in <dataset dir>/dovecot-check/ (no extra disk): Dovecot only reads message
 # files (no flag changes, so no renames) and replaces dovecot-uidlist by rename, so the build is untouched.
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
-image="${DOVECOT_IMAGE:-dovecot/dovecot:latest}"
-work="$here/.cache/dovecot-check"
+data="${MAILTESTENV_APACHE_DIR:-$here/.cache}"
+# dovecot/dovecot 2.4.5 (0cbb641e3e), pinned by digest.
+image="${DOVECOT_IMAGE:-dovecot/dovecot@sha256:c807be4fb5a97d9c3a90770569d3a6c4cbdcb36742ad41f90409cbd929166553}"
+work="$data/dovecot-check"
 rm -rf "$work"
 mkdir -p "$work"/{run,state,home,idx}
-cp -al "$here/.cache/maildir" "$work/m"
-cat > "$work/dovecot.conf" <<'EOF'
+cp -al "$data/maildir" "$work/m"
+cat >"$work/dovecot.conf" <<'EOF'
 dovecot_config_version = 2.4.0
 dovecot_storage_version = 2.4.0
 protocols =

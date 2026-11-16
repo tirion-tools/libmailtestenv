@@ -9,16 +9,25 @@ SRC=/opt/testenv/gmail
 STAMP=$(cat "$SRC"/*.py "$SRC"/dovecot.conf | sha256sum | cut -c1-16)
 mkdir -p /tmp/dovecot /state
 chown testenv:testenv /tmp/dovecot
-start_dovecot() { dovecot -c "$SRC/dovecot.conf"; for _ in $(seq 100); do (exec 3<>/dev/tcp/127.0.0.1/1143) 2>/dev/null && return; sleep 0.1; done; echo "dovecot did not start" >&2; exit 1; }
+start_dovecot() {
+  dovecot -c "$SRC/dovecot.conf"
+  for _ in $(seq 100); do
+    (exec 3<>/dev/tcp/127.0.0.1/1143) 2>/dev/null && return
+    sleep 0.1
+  done
+  echo "dovecot did not start" >&2
+  exit 1
+}
 
 if [[ ! -f /state/pristine/STAMP || $(cat /state/pristine/STAMP) != "$STAMP" ]]; then
   echo "seeding Gmail stand-in mailboxes (once)"
   rm -rf /state/pristine /mailstore && install -d -o testenv -g testenv /mailstore /state/pristine
   start_dovecot
   python3 "$SRC/seed.py" gmail /state/pristine/gmail-state.json /state/pristine/manifest.json
-  dovecot -c "$SRC/dovecot.conf" stop; sleep 1
+  dovecot -c "$SRC/dovecot.conf" stop
+  sleep 1
   cp -a /mailstore /state/pristine/mailstore
-  echo "$STAMP" > /state/pristine/STAMP
+  echo "$STAMP" >/state/pristine/STAMP
   rm -rf /mailstore
 fi
 # The proxy keeps its label model in memory, loaded from gmail-state.json at start: serving a used work/ after a restart
@@ -28,10 +37,16 @@ cp -a /state/pristine/mailstore /state/work/mailstore
 cp /state/pristine/gmail-state.json /state/work/gmail-state.json
 ln -sfn /state/work/mailstore /mailstore
 start_dovecot
-python3 "$SRC/gmail_proxy.py" 1993 1143 /state/work/gmail-state.json /state/work/proxy.jsonl /state/work/capabilities.json > /state/work/proxy.out 2>&1 &
+python3 "$SRC/gmail_proxy.py" 1993 1143 /state/work/gmail-state.json /state/work/proxy.jsonl /state/work/capabilities.json >/state/work/proxy.out 2>&1 &
 proxy=$!
-for _ in $(seq 100); do grep -q ready /state/work/proxy.out 2>/dev/null && break; sleep 0.1; done
-grep -q ready /state/work/proxy.out || { cat /state/work/proxy.out; exit 1; }
+for _ in $(seq 100); do
+  grep -q ready /state/work/proxy.out 2>/dev/null && break
+  sleep 0.1
+done
+grep -q ready /state/work/proxy.out || {
+  cat /state/work/proxy.out
+  exit 1
+}
 socat TCP-LISTEN:12143,fork,reuseaddr TCP:127.0.0.1:1993 &
 echo "mailtestenv-gmail ready: users gmail gmailhidden gmailcapped gmailcap5k, password 'pass'"
 tail -F /tmp/dovecot/dovecot.log &

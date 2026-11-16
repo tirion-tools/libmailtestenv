@@ -2,7 +2,7 @@
 # mailtestenv-mail: Dovecot 2.4.5 (IMAP 143/993) + Postfix (submission 587, submissions 465).
 # Every start generates a throwaway PKI,
 # an OAuth2 JWT signing key with tokens, random passwords and a synthetic corpus, and writes what a
-# client needs to /state (bind mount testenv/.state/mail): ca.crt, rogue-ca.crt, secrets.tsv. The enron role's
+# client needs to /state (bind mount STATE/mail): ca.crt, rogue-ca.crt, secrets.tsv. The enron role's
 # certificate and key, from the same CA, go to /state/private (root-only, mounted into the enron container).
 # TLS everywhere; the right certificate is served only for SNI mail.mailtestenv.test (or dns-a.),
 # `wrong.` otherwise; rogue.mailtestenv.test has the right name from an untrusted CA.
@@ -19,7 +19,7 @@ cd "$STATE/pki"
 
 issue() { # name san-list ca
   openssl req -newkey rsa:2048 -nodes -subj "/CN=$1.mailtestenv.test" -keyout "$1.key" -out "$1.csr" 2>/dev/null
-  printf 'subjectAltName=%s\nextendedKeyUsage=serverAuth\nbasicConstraints=critical,CA:FALSE\nkeyUsage=critical,digitalSignature,keyEncipherment\nsubjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid:always\n' "$2" > "$1.ext"
+  printf 'subjectAltName=%s\nextendedKeyUsage=serverAuth\nbasicConstraints=critical,CA:FALSE\nkeyUsage=critical,digitalSignature,keyEncipherment\nsubjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid:always\n' "$2" >"$1.ext"
   openssl x509 -req -in "$1.csr" -CA "$3.crt" -CAkey "$3.key" -CAcreateserial -days 7 -sha256 -extfile "$1.ext" -out "$1.crt" 2>/dev/null
 }
 for ca in ca rogue-ca; do
@@ -35,9 +35,9 @@ install -m 0644 enron.crt "$STATE/private/enron.crt" && install -m 0600 enron.ke
 rm -f enron.crt
 for n in mail wrong rogue; do
   install -m 0644 "$n.crt" /etc/dovecot/pki/ && install -m 0600 "$n.key" /etc/dovecot/pki/
-  cat "$n.key" "$n.crt" > "/etc/postfix/pki/$n.pem" && chmod 0600 "/etc/postfix/pki/$n.pem"
+  cat "$n.key" "$n.crt" >"/etc/postfix/pki/$n.pem" && chmod 0600 "/etc/postfix/pki/$n.pem"
 done
-rm -f ./*.key ./*.csr ./*.ext ./*.srl   # the host only ever sees public certificates
+rm -f ./*.key ./*.csr ./*.ext ./*.srl # the host only ever sees public certificates
 
 openssl genrsa -out /root/jwt.key 2048 2>/dev/null
 openssl rsa -in /root/jwt.key -pubout -out /etc/dovecot/oauth2-keys/default/RS256/default 2>/dev/null
@@ -62,13 +62,13 @@ print(f"{head}.{body}.{b64(sig)}")
 PY
 }
 
-: > /etc/dovecot/users
-: > /etc/postfix/vmailbox
+: >/etc/dovecot/users
+: >/etc/postfix/vmailbox
 declare -A PW
 for name in alice bob bulk; do
   PW[$name]=$(openssl rand -hex 16)
-  echo "$name@mailtestenv.test:{PLAIN}${PW[$name]}:5000:5000::/srv/mail/$name::" >> /etc/dovecot/users
-  echo "$name@mailtestenv.test $name/" >> /etc/postfix/vmailbox
+  echo "$name@mailtestenv.test:{PLAIN}${PW[$name]}:5000:5000::/srv/mail/$name::" >>/etc/dovecot/users
+  echo "$name@mailtestenv.test $name/" >>/etc/postfix/vmailbox
   rm -rf "/srv/mail/$name"
   install -d -o vmail -g vmail "/srv/mail/$name/Maildir/"{cur,new,tmp}
 done
@@ -83,7 +83,7 @@ write_secrets() { # replaced by rename, so a reader never sees a half-written fi
     printf 'alice@mailtestenv.test\toauth2-access-token\tmail.mailtestenv.test\t%s\n' "$good"
     printf 'alice@mailtestenv.test\toauth2-access-token-bad-signature\tmail.mailtestenv.test\t%s\n' "$bad"
     printf 'alice@mailtestenv.test\toauth2-access-token-wrong-subject\tmail.mailtestenv.test\t%s\n' "$wrong"
-  } > "$STATE/secrets.tsv.new" && chmod 0644 "$STATE/secrets.tsv.new" && mv -f "$STATE/secrets.tsv.new" "$STATE/secrets.tsv"
+  } >"$STATE/secrets.tsv.new" && chmod 0644 "$STATE/secrets.tsv.new" && mv -f "$STATE/secrets.tsv.new" "$STATE/secrets.tsv"
 }
 write_secrets
 
@@ -103,7 +103,7 @@ chown -R vmail:vmail /srv/mail
 install -m 0644 "$SRC/dovecot.conf" /etc/dovecot/dovecot.conf
 install -m 0644 "$SRC/main.cf" /etc/postfix/main.cf
 install -m 0644 "$SRC/master.cf" /etc/postfix/master.cf
-printf 'mail.mailtestenv.test /etc/postfix/pki/mail.pem\nrogue.mailtestenv.test /etc/postfix/pki/rogue.pem\n' > /etc/postfix/sni
+printf 'mail.mailtestenv.test /etc/postfix/pki/mail.pem\nrogue.mailtestenv.test /etc/postfix/pki/rogue.pem\n' >/etc/postfix/sni
 postmap -F lmdb:/etc/postfix/sni
 touch /var/log/postfix.log /var/log/dovecot.log
 dovecot
@@ -115,9 +115,13 @@ for _ in $(seq 100); do
   [[ $ok == 1 ]] && break
   sleep 0.1
 done
-[[ $ok == 1 ]] || { echo "servers did not start" >&2; tail -n 50 /var/log/postfix.log /var/log/dovecot.log >&2; exit 1; }
+[[ $ok == 1 ]] || {
+  echo "servers did not start" >&2
+  tail -n 50 /var/log/postfix.log /var/log/dovecot.log >&2
+  exit 1
+}
 cp /opt/testenv-packages.txt "$STATE/server-versions.txt"
-find "$STATE" -path "$STATE/private" -prune -o -exec chmod a+rX {} +  # private/ stays root-only
+find "$STATE" -path "$STATE/private" -prune -o -exec chmod a+rX {} + # private/ stays root-only
 # Token refresh for the container's lifetime; a failed round is logged and retried at the next one.
 (
   set +e
