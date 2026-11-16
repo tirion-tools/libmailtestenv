@@ -83,7 +83,17 @@ def run(env, state):
     with imap(host, ep["imaps"], name, ca) as c:
         c.login(alice, pw_alice)
         assert c.select("INBOX")[0] == "OK"
-    print("  imaps: alice logged in")
+        # A fresh instance has the special-use mailboxes, subscribed, as a real provider does (RFC 6154).
+        typ, data = c.list()
+        assert typ == "OK", data
+        special = ("Sent", "Drafts", "Trash", "Junk")
+        name_of = lambda line: line.decode().rsplit(" ", 1)[-1].strip('"')
+        boxes = {name_of(line): line.decode() for line in data}
+        for box in special:
+            assert box in boxes and f"\\{box}" in boxes[box], f"{box}: {boxes.get(box)}"
+        typ, data = c.lsub('""', "*")
+        assert typ == "OK" and set(special) <= {name_of(line) for line in data}, data
+    print("  imaps: alice logged in; Sent, Drafts, Trash, Junk exist with their special-use flags and are subscribed")
     with imap(host, ep["imap"], name) as c:
         c.starttls(context(ca))
         c.login(alice, pw_alice)

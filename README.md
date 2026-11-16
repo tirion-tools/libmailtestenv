@@ -286,10 +286,12 @@ it runs, so a token read at any time has at least 23 h left. `testenv.sh status`
 left (the refresher stopped) and when the server certificate (7 days) expires within 24 h; `testenv.sh reset mail`
 regenerates everything.
 
-Users `alice@mailtestenv.test`, `bob@mailtestenv.test`, `bulk@mailtestenv.test`. TLS is required before
-authentication. Certificates depend on SNI: `mail.mailtestenv.test` and `dns-a.mailtestenv.test` get the valid chain,
-any other name (or none) the `wrong.mailtestenv.test` certificate, and `rogue.mailtestenv.test` a certificate with the
-right name from an untrusted CA. Postfix delivers only to `mailtestenv.test` (`default_transport = error`).
+Users `alice@mailtestenv.test`, `bob@mailtestenv.test`, `bulk@mailtestenv.test`. Each has INBOX and, from the first
+login, the subscribed special-use mailboxes `Sent` (`\Sent`), `Drafts` (`\Drafts`), `Trash` (`\Trash`) and `Junk`
+(`\Junk`), as a real provider has (RFC 6154; Dovecot `auto = subscribe`), so no client or test needs to create them.
+TLS is required before authentication. Certificates depend on SNI: `mail.mailtestenv.test` and
+`dns-a.mailtestenv.test` get the valid chain, any other name (or none) the `wrong.mailtestenv.test` certificate, and
+`rogue.mailtestenv.test` a certificate with the right name from an untrusted CA. Postfix delivers only to `mailtestenv.test` (`default_transport = error`).
 XOAUTH2/OAUTHBEARER tokens are validated locally by Dovecot (issuer `https://issuer.mailtestenv.test`).
 
 ## `gmail`: Gmail IMAP stand-in
@@ -376,8 +378,9 @@ again (about 25 s).
 - `selftest`: `testenv.sh selftest`;
 - `smoke`: `tools/smoke.py` starts the `mail` role as a private instance (prefix `mailtestenv-gate`, host ports +
   30000, a temporary state directory) and works through the env document alone: the document is valid and equals
-  `STATE/env.json`; IMAPS and IMAP STARTTLS logins validate against the CA and the primary name; the wrong-name and
-  untrusted-issuer certificates fail validation; XOAUTH2 accepts the valid token and refuses the bad-signature token;
+  `STATE/env.json`; IMAPS and IMAP STARTTLS logins validate against the CA and the primary name; alice has Sent,
+  Drafts, Trash and Junk with their special-use flags, subscribed; the wrong-name and untrusted-issuer certificates
+  fail validation; XOAUTH2 accepts the valid token and refuses the bad-signature token;
   submission and submissions authenticate, and a message reaches bob's INBOX. Then `down` and `purge`.
 
 ## Licence
