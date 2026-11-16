@@ -115,7 +115,7 @@ against it and checks that this example is exactly what `env --json` prints for 
 
 - `schema` is `mailtestenv-env` and `version` is `1`. Version 1 may gain optional members. A change that breaks a
   version-1 reader increments `version`, so a reader checks both.
-- File paths (`ca`, `secrets`, `accounts_file`, `tls_matrix.rogue_ca`) are relative to the state directory, that is
+- File paths (`ca`, `secrets`, `accounts_file`, `maildir`, `tls_matrix.rogue_ca`) are relative to the state directory, that is
   the directory holding `env.json`. A reader that sees the state somewhere else (a bind mount in a container) resolves
   them against the directory it read `env.json` from. `state_dir` only records where the producer saw it.
 - `server_names[0]` is the name to send as SNI and to validate the certificate against; connect to `host`.
@@ -127,6 +127,8 @@ against it and checks that this example is exactly what `env --json` prints for 
   run starts.
 - `accounts` lists the users. A role with many users (`enron`) names an `accounts_file` instead: a TSV with a header
   line and the user in the first column.
+- `maildir` is the read-only pristine Maildir tree of a corpus role (`enron`: one directory per mailbox owner), for
+  readers that use the messages without IMAP; null for the other roles.
 
 <!-- env-json-example -->
 ```json
@@ -171,6 +173,7 @@ against it and checks that this example is exactly what `env --json` prints for 
       ],
       "accounts_file": null,
       "password": null,
+      "maildir": null,
       "tls_matrix": {
         "valid": [
           "mail.mailtestenv.test",
@@ -214,7 +217,8 @@ against it and checks that this example is exactly what `env --json` prints for 
         "gmailcap5k"
       ],
       "accounts_file": null,
-      "password": "pass"
+      "password": "pass",
+      "maildir": null
     },
     "enron": {
       "container": "mailtestenv-enron",
@@ -245,7 +249,8 @@ against it and checks that this example is exactly what `env --json` prints for 
       "secrets": null,
       "accounts": [],
       "accounts_file": "enron/pristine/MANIFEST.tsv",
-      "password": "pass"
+      "password": "pass",
+      "maildir": "enron/pristine/mail"
     },
     "apache": {
       "container": "mailtestenv-apache",
@@ -265,7 +270,8 @@ against it and checks that this example is exactly what `env --json` prints for 
         "apache"
       ],
       "accounts_file": null,
-      "password": "pass"
+      "password": "pass",
+      "maildir": null
     }
   }
 }

@@ -69,6 +69,7 @@ ROLES = {
         "ca": "mail/pki/ca.crt",
         "accounts_file": "enron/pristine/MANIFEST.tsv",
         "password": PASSWORD,
+        "maildir": "enron/pristine/mail",
     },
     "apache": {
         "endpoints": {"imap": (14143, 14143, "none")},
@@ -130,6 +131,7 @@ def env_document(state, prefix, offset):
             "accounts": spec.get("accounts", []),
             "accounts_file": spec.get("accounts_file"),
             "password": spec.get("password"),
+            "maildir": spec.get("maildir"),
         }
         for extra in ("tls_matrix", "oauth"):
             if extra in spec:
