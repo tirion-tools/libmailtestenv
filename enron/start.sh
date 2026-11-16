@@ -7,9 +7,12 @@
 # `start.sh --reload-tls` (testenv.sh, after a mail start) rebuilds Postfix's chain file from /tls and reloads Postfix.
 set -euo pipefail
 SRC=/opt/testenv/enron
-enron_pem() { (umask 077 && cat /tls/enron.key /tls/enron.crt > /etc/postfix/pki/enron.pem.new) &&
+enron_pem() { (umask 077 && cat /tls/enron.key /tls/enron.crt >/etc/postfix/pki/enron.pem.new) &&
   mv -f /etc/postfix/pki/enron.pem.new /etc/postfix/pki/enron.pem; }
-[[ ${1:-} == --reload-tls ]] && { enron_pem && postfix reload 2>/dev/null; exit; }
+[[ ${1:-} == --reload-tls ]] && {
+  enron_pem && postfix reload 2>/dev/null
+  exit
+}
 STAMP="$ENRON_SHA256 $(sha256sum "$SRC/convert.py" | cut -c1-16)"
 mkdir -p /tmp/dovecot && chown testenv:testenv /tmp/dovecot
 
