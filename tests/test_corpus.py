@@ -8,6 +8,7 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "gmail"))
 import corpus  # noqa: E402
+import seed  # noqa: E402
 
 # sha256 over (8-byte little-endian length, raw message) of generate_gmail(), in order.
 DIGEST = "8bd763de842cd6a4f23e5f634e27b76fa37a6af2db719ec539d0a73fb46a8178"
@@ -41,6 +42,13 @@ class Corpus(unittest.TestCase):
         blob = b"".join(item[2] for item in self.items[:500])
         for real in (b"Roberts", b"Scully", b"Palmer", b"Walker", b"Gallagher"):
             self.assertNotIn(real, blob)
+
+    def test_seed_model_covers_the_corpus(self):
+        # The seeder's model (what `up gmail` appends): every corpus message in All Mail with an IMAP date.
+        queues, msgs = seed.gmail_model()
+        self.assertEqual(len(queues[corpus.GMAIL_ALL]), 5000)
+        self.assertEqual(len(msgs), 5000 + len(queues[corpus.GMAIL_SPAM]) + len(queues[corpus.GMAIL_TRASH]))
+        self.assertRegex(queues[corpus.GMAIL_ALL][0][1], r"^\d{2}-[A-Z][a-z]{2}-\d{4} \d{2}:\d{2}:\d{2} \+0000$")
 
 
 if __name__ == "__main__":

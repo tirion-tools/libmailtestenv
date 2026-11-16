@@ -373,3 +373,5 @@ def generate_gmail_outside(folder, seed=SEED):
         yield when + timedelta(seconds=mrng.randrange(5, 300)), flags, raw, labels, gm, gm
 
 
+def imap_date(dt):
+    return dt.astimezone(timezone.utc).strftime("%d-%b-%Y %H:%M:%S +0000")
