@@ -1,0 +1,53 @@
+Thunderbird test data, MPL-2.0 (see LICENSE in this directory).
+
+The files below are unmodified copies of Thunderbird's own OpenPGP and S/MIME test messages
+and keys. They were taken from the releases-comm-central mirror
+(https://github.com/mozilla/releases-comm-central) at commit
+e2ac505abeb247df2bb605d740a954887d2f4bfd and renamed with a "tb-" prefix ("tb-smime-" for
+the NSS S/MIME data). Nothing else in this repository is covered by this licence.
+
+Every hash equals the commit's file.
+
+sha256  file  <- path at that commit
+05b24963b407507a587576c115a01f29741b97a7237d062598719eebd4d29723  eml/tb-alice-signed.eml  <- mail/test/browser/openpgp/data/eml/alice-signed.eml
+760b22ba4e26417bca5234916179e14930b827be9b8fd98c9b5e4cdd5a5ae70a  eml/tb-bob-to-alice-signed-damaged-signature.eml  <- mail/test/browser/openpgp/data/eml/bob-to-alice-signed-damaged-signature.eml
+3cf8cef37a0c8cf50ca4f704aa1c6c800f69fbabe2f8d6c9988b4d8191c62cc1  eml/tb-enc-to-carol@pgp.icu-revoked.eml  <- mail/test/browser/openpgp/data/eml/enc-to-carol@pgp.icu-revoked.eml
+51c86ec874345bc7c2cd5116c02e02ad89c2b23c583734eec6f3e47cb19aaad6  eml/tb-encrypted-and-signed-alice-to-bob-nonascii.eml  <- mail/test/browser/openpgp/data/eml/encrypted-and-signed-alice-to-bob-nonascii.eml
+1097030bf4ccd2f676269628a83b51d3f514e6a7880f3132e893e3d8c0858081  eml/tb-encrypted-to-alice-as-hidden-recipient.eml  <- mail/test/browser/openpgp/data/eml/encrypted-to-alice-as-hidden-recipient.eml
+4cfc025b99cf09b0d456a12a400c986f9d38742c51f824e21debb10fe4af0b97  eml/tb-encrypted-to-bob-and-100-others.eml  <- mail/test/browser/openpgp/data/eml/encrypted-to-bob-and-100-others.eml
+d28b6f33b3b6c64c9cffa592789e240a05f23dce77fb2fc7e44d7351d856e6b2  eml/tb-eve-duplicate.eml  <- mail/test/browser/openpgp/data/eml/eve-duplicate.eml
+8f94e73aabfdeef00b5161c109f74a3185b1eda38746a1f3b3273c09bf755924  eml/tb-inline-signed-latin1.eml  <- mail/test/browser/openpgp/data/eml/inline-signed-latin1.eml
+f245e239da3842db30e5b3ed416bbabd7fccea020ccf1d5f8e77dd2340414c20  eml/tb-inline-signed-utf8.eml  <- mail/test/browser/openpgp/data/eml/inline-signed-utf8.eml
+e4e34820f69d3309eaab4a51aa83c38943feeb2634179cbe037b11709500a2e7  eml/tb-multiple-signatures.eml  <- mail/test/browser/openpgp/data/eml/multiple-signatures.eml
+28ffe654ec19f38bab0d95e0d260885c1fa1b03903d6f2a3e682be8acb0a53f1  eml/tb-openpgp__stripped_sig.eml  <- mail/test/browser/openpgp/data/eml/openpgp__stripped_sig.eml
+377b9609555b109125d3f733aacc8d943e912db55109a32179d9468f5af1c880  eml/tb-partial-encrypt-for-alice-html.eml  <- mail/test/browser/openpgp/data/eml/partial-encrypt-for-alice-html.eml
+5dac4e4cb39f2de496e23910ffc2287990e50eabedf32377a919427452f108dd  eml/tb-partial-encrypt-for-alice-plaintext.eml  <- mail/test/browser/openpgp/data/eml/partial-encrypt-for-alice-plaintext.eml
+c2ddb16d185cd1112a7bf0105c5aa7a0bd093280403ba6a1f5060056b32ea638  eml/tb-rc-openpgp-aead.eml  <- mail/test/browser/openpgp/data/eml/rc-openpgp-aead.eml
+f85748f1980bd5fc2f9290f95b56e376faf2c44b816895b145c90acecd91e7b0  eml/tb-rc-openpgp-mdc-tampered.eml  <- mail/test/browser/openpgp/data/eml/rc-openpgp-mdc-tampered.eml
+35e40d77fa4b5ace3c73b2100f15dc159391bb024f266cba84fa8fe8e3a96286  eml/tb-rc-openpgp-mdc.eml  <- mail/test/browser/openpgp/data/eml/rc-openpgp-mdc.eml
+9b86748ef8b249ab6a9a854e0e5d2e333cefff7eeed24bdb27b92a9fc1f1a10e  eml/tb-rc-openpgp-mixed-subpart.eml  <- mail/test/browser/openpgp/data/eml/rc-openpgp-mixed-subpart.eml
+cf3944391c4b4697e9ea5fcbf138ee56dfadce96ca0ac4137cd97b375b5a3378  eml/tb-rc-openpgp-nomdc.eml  <- mail/test/browser/openpgp/data/eml/rc-openpgp-nomdc.eml
+ac4e4697835fad66cac663ad9487d0d354ed17d4525330d6107a14c764b344ab  eml/tb-rc-openpgp-sigwrap-mdc.eml  <- mail/test/browser/openpgp/data/eml/rc-openpgp-sigwrap-mdc.eml
+46b1ad3c222866c3e0b84841fd13f62d27514dbc8a6756cac8193c598ffabbd5  eml/tb-rc-openpgp-sigwrap-nomdc.eml  <- mail/test/browser/openpgp/data/eml/rc-openpgp-sigwrap-nomdc.eml
+fe1b2719582ff06ce2a3655b0e50782a89edc3460453a76a2460d7bbcc8c0e8a  eml/tb-signed-by-0x3099ff1238852b9f-encrypted-to-0xf231550c4f47e38e.eml  <- mail/test/browser/openpgp/data/eml/signed-by-0x3099ff1238852b9f-encrypted-to-0xf231550c4f47e38e.eml
+ec81047d33ec4a84f4cda3ae0a7756fe3df7b9f147acd52765aa695369f904c2  eml/tb-signed-by-0x3099ff1238852b9f-to-0xf231550c4f47e38e-unencrypted.eml  <- mail/test/browser/openpgp/data/eml/signed-by-0x3099ff1238852b9f-to-0xf231550c4f47e38e-unencrypted.eml
+c6e17aaa098ae060100cbaaab5d4a095dee113b138a40ca8c76a4c9e9671d9cd  eml/tb-signed-by-0xfbfcc82a015e7330-encrypted-to-0xf231550c4f47e38e.eml  <- mail/test/browser/openpgp/data/eml/signed-by-0xfbfcc82a015e7330-encrypted-to-0xf231550c4f47e38e.eml
+fbff5f3243fe8da596755b064431f2112c1114efde5a4cb9c63e5f7e215edc46  eml/tb-signed-by-0xfbfcc82a015e7330-to-0xf231550c4f47e38e-unencrypted-in-mixed.eml  <- mail/test/browser/openpgp/data/eml/signed-by-0xfbfcc82a015e7330-to-0xf231550c4f47e38e-unencrypted-in-mixed.eml
+4c305aa0648af947cf5b3fe04d66b193680fa506fd668c6d4e5f35ff22e1b025  eml/tb-signed-by-0xfbfcc82a015e7330-to-0xf231550c4f47e38e-unencrypted.eml  <- mail/test/browser/openpgp/data/eml/signed-by-0xfbfcc82a015e7330-to-0xf231550c4f47e38e-unencrypted.eml
+278f374e2f64a598f8e7b7fd8435b93fb456e508121bc768bdfd822c8c9820ac  eml/tb-signed-mismatch-email-date.eml  <- mail/test/browser/openpgp/data/eml/signed-mismatch-email-date.eml
+7b04a48bc126052743aebf40ead4f3ac57eb1ca102b09e97dd98aeede6574bd0  eml/tb-signed-with-mailman-footer.eml  <- mail/test/browser/openpgp/data/eml/signed-with-mailman-footer.eml
+ddb5dbabf4d24c98084b5ce19d6bab58e518ecf6211e9c17f4171fb904577ad8  eml/tb-sigspoof-git-commit.eml  <- mail/test/browser/openpgp/data/eml/sigspoof-git-commit.eml
+ae81f6c7a7dc34c3e0a9ece09d633056a5afd7bf05e62565d6431eafbee30a62  eml/tb-smime-alice.dsig.SHA256.multipart.bad.eml  <- mailnews/test/data/smime/alice.dsig.SHA256.multipart.bad.eml
+6097ceaabfcf46f581b43c472a5c8cb5e74e5a918790f069bff871d8e005d47a  eml/tb-smime-alice.dsig.SHA256.multipart.eml  <- mailnews/test/data/smime/alice.dsig.SHA256.multipart.eml
+315032fcff54f7e8998f2d9a2da47a5f07bdca4de4381c4052d7fe20a869fe20  eml/tb-smime-alice.dsig.SHA256.multipart.mismatch-econtent.eml  <- mailnews/test/data/smime/alice.dsig.SHA256.multipart.mismatch-econtent.eml
+1743db8a52c99c3abe500c41f0d81cf1173da02402720406e2b44df28e8fcd13  eml/tb-smime-alice.dsig.SHA512.multipart.mismatch-econtent.eml  <- mailnews/test/data/smime/alice.dsig.SHA512.multipart.mismatch-econtent.eml
+1570dedc058ccbd30599b56630f7e8ecd6eec6e8dacbc8d176cd068b41b74b60  eml/tb-smime-alice.env.eml  <- mailnews/test/data/smime/alice.env.eml
+39b7909ec35080df129fb54e292c5ae869e007166298990770ab1eafac49cd49  eml/tb-unsigned-encrypted-to-0xf231550c4f47e38e-from-0xfbfcc82a015e7330.eml  <- mail/test/browser/openpgp/data/eml/unsigned-encrypted-to-0xf231550c4f47e38e-from-0xfbfcc82a015e7330.eml
+65e5f0327b47ab52ac67e5667186d02264312cb763edc5bd4e9c803ab338cb06  keys/tb-alice.pub.asc  <- mail/test/browser/openpgp/data/keys/alice@openpgp.example-0xf231550c4f47e38e-pub.asc
+2b09bc54e3002c5edace97f9490796fadf2a779da527902606f4ea816e8a6b0d  keys/tb-alice.sec.asc  <- mail/test/browser/openpgp/data/keys/alice@openpgp.example-0xf231550c4f47e38e-secret.asc
+2fb3bee64a1fd779e13e381f4f265147a1ff6f9421b8c23b6f5dc5cc035fb498  keys/tb-bob.pub.asc  <- mail/test/browser/openpgp/data/keys/bob@openpgp.example-0xfbfcc82a015e7330-pub.asc
+c77859a9d31c715cff5fcada6da5f4a9ad683570fc8de22f71e78f3bbc088cb3  keys/tb-bob.sec.asc  <- mail/test/browser/openpgp/data/keys/bob@openpgp.example-0xfbfcc82a015e7330-secret.asc
+d67dae2ee3bb5440f4c9ba01ecc9a8a9ff844a7b94dce6837088c5499920367f  keys/tb-carol.pub.asc  <- mail/test/browser/openpgp/data/keys/carol@example.com-0x3099ff1238852b9f-pub.asc
+f0cd58588fc9654c6747e62d698275c561c6f0846325549f18c6526362679817  keys/tb-smime-Alice.p12  <- mailnews/test/data/smime/Alice.p12
+9e6f66aa65b852b91a40f180a639dfe71efdcd82a8e8180dc90ca24f1849c832  keys/tb-smime-Bob.p12  <- mailnews/test/data/smime/Bob.p12
+568d442e8bfee06af7811a594affc9edfd1eecff7c63cbb41060fbd073c8217d  keys/tb-smime-TestCA.pem  <- mailnews/test/data/smime/TestCA.pem

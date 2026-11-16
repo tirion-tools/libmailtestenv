@@ -1,0 +1,3 @@
+# testenv.sh builds with testenv/ as the context: runtime state and Python caches never enter the image.
+.state
+**/__pycache__
