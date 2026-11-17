@@ -17,7 +17,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MPL_DIR = os.path.join("fixtures", "thunderbird-mpl")
 SKIP_DIRS = {".git", ".state", ".cache", "__pycache__"}
 MAX_BYTES = 1 << 20
-COPYRIGHT = "Copyright (c) 2026 libmailtestenv contributors"
+COPYRIGHT = "Copyright (c) 2026 Tirion"
 
 
 def files():
