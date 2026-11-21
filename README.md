@@ -383,6 +383,12 @@ again (about 25 s).
   fail validation; XOAUTH2 accepts the valid token and refuses the bad-signature token;
   submission and submissions authenticate, and a message reaches bob's INBOX. Then `down` and `purge`.
 
+## Contributing
+
+This repository is not accepting contributions at this time: issues and pull requests are not accepted. Report
+security vulnerabilities privately as described in [`SECURITY.md`](SECURITY.md).
+
 ## Licence
 
-MIT (`LICENSE`), except `fixtures/thunderbird-mpl/` (MPL-2.0, see Data rules).
+MIT (`LICENSE`), except `fixtures/thunderbird-mpl/` (MPL-2.0, see Data rules). Third-party material and downloaded
+corpora: `THIRD-PARTY-NOTICES.md`.
