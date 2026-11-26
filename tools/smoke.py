@@ -122,15 +122,19 @@ def run(env, state):
         s._host = name  # SNI and certificate name for starttls()
         s.starttls(context=context(ca))
         s.login(alice, pw_alice)
+        size = s.esmtp_features.get("size")
+        assert size == "10240000", f"submission SIZE {size!r}, expected 10240000"
         s.sendmail(alice, [bob], msg)
-    print("  submission + STARTTLS: sent alice -> bob")
+    print("  submission + STARTTLS: SIZE 10240000; sent alice -> bob")
     class Smtps(smtplib.SMTP_SSL):  # connects to the address, validates against the server name
         def _get_socket(self, _host, port, timeout):
             return self.context.wrap_socket(socket.create_connection((host, port), timeout), server_hostname=name)
 
     with Smtps(host, ep["submissions"], context=context(ca), timeout=TIMEOUT) as s:
         s.login(bob, pw_bob)
-    print("  submissions: bob authenticated")
+        size = s.esmtp_features.get("size")
+        assert size == "300000000", f"submissions SIZE {size!r}, expected 300000000"
+    print("  submissions: SIZE 300000000; bob authenticated")
     deadline = time.monotonic() + 60
     while True:
         with imap(host, ep["imaps"], name, ca) as c:

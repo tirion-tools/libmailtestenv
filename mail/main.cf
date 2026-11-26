@@ -13,6 +13,10 @@ maillog_file = /var/log/postfix.log
 biff = no
 append_dot_mydomain = no
 smtpd_banner = $myhostname ESMTP mailtestenv
+# Clients can test both sides of a size limit (SIZE in EHLO, RFC 1870): submissions (465) accepts up to 300,000,000
+# bytes, above any provider's limit, so a large message can be sent and stored; submission (587) keeps Postfix's own
+# default of 10,240,000 bytes (master.cf), so a too-large message is refused (552 at MAIL FROM SIZE=).
+message_size_limit = 300000000
 virtual_mailbox_domains = mailtestenv.test
 virtual_mailbox_maps = texthash:/etc/postfix/vmailbox
 virtual_transport = lmtp:unix:private/dovecot-lmtp

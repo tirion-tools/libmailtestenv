@@ -1,10 +1,12 @@
-# STARTTLS submission (587) and implicit-TLS submissions (465); both require TLS before AUTH.
+# STARTTLS submission (587) and implicit-TLS submissions (465); both require TLS before AUTH. 587 advertises Postfix's
+# default SIZE 10240000; 465 the main.cf limit (SIZE 300000000).
 submission inet n       -       n       -       -       smtpd
   -o syslog_name=postfix/submission
   -o smtpd_tls_security_level=encrypt
   -o smtpd_tls_auth_only=yes
   -o smtpd_sasl_auth_enable=yes
   -o smtpd_client_restrictions=permit_sasl_authenticated,reject
+  -o message_size_limit=10240000
 submissions inet n      -       n       -       -       smtpd
   -o syslog_name=postfix/submissions
   -o smtpd_tls_wrappermode=yes

@@ -13,7 +13,9 @@ This is glue around existing servers; it does not replace them, and fixes found 
   per-SNI certificates (`local_name`), and XOAUTH2/OAUTHBEARER with JWTs validated locally (`oauth2 { introspection_mode
   = local }`).
 - **[Postfix](https://www.postfix.org/)** serves submission on 587 (STARTTLS) and 465 (implicit TLS), authenticates through
-  Dovecot and delivers through Dovecot LMTP, with per-SNI certificates (`tls_server_sni_maps`).
+  Dovecot and delivers through Dovecot LMTP, with per-SNI certificates (`tls_server_sni_maps`). The two ports have
+  different message size limits (`SIZE`), so clients can test both sides of one: 465 accepts up to 300,000,000 bytes,
+  587 keeps Postfix's default of 10,240,000.
 - **Python 3**, standard library only, for the Gmail stand-in, the corpus generator, the dataset converters and the
   tooling. **OpenSSL** issues the throwaway PKI and signs the tokens. **socat** and **rsync** move bytes and files.
 
@@ -381,7 +383,8 @@ again (about 25 s).
   `STATE/env.json`; IMAPS and IMAP STARTTLS logins validate against the CA and the primary name; alice has Sent,
   Drafts, Trash and Junk with their special-use flags, subscribed; the wrong-name and untrusted-issuer certificates
   fail validation; XOAUTH2 accepts the valid token and refuses the bad-signature token;
-  submission and submissions authenticate, and a message reaches bob's INBOX. Then `down` and `purge`.
+  submission and submissions authenticate and advertise SIZE 10240000 and 300000000, and a message reaches bob's
+  INBOX. Then `down` and `purge`.
 
 ## Contributing
 
